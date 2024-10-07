@@ -1,0 +1,23 @@
+@page
+@model FormPageModel
+
+<h2>Submit Data to be Converted to XML</h2>
+
+<form method="post">
+    <label for="personName">Name:</label><br>
+    <input type="text" id="personName" name="personName"><br><br>
+
+    <label for="personAge">Age:</label><br>
+    <input type="number" id="personAge" name="personAge"><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+<h3>Validation Result:</h3>
+<p>@Model.ValidationResult</p>
+
+<h3>Processed XML Output:</h3>
+@if (Model.XmlOutput != null)
+{
+    <pre>@Model.XmlOutput</pre>
+}
