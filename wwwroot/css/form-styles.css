@@ -1,0 +1,24 @@
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Space between fields */
+    justify-content: space-between; /* Ensures even spacing between items */
+}
+
+.form-group {
+    flex-basis: calc(33.33% - 10px); /* Each field takes 1/3 of the width, minus spacing */
+    min-width: 250px; /* Minimum width to ensure it doesn't become too narrow */
+    box-sizing: border-box; /* Ensure padding/margin doesn't affect field size */
+}
+
+@media (max-width: 900px) {
+    .form-group {
+        flex-basis: calc(50% - 10px); /* Two fields per row on smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .form-group {
+        flex-basis: 100%; /* One field per row on very small screens */
+    }
+}
