@@ -146,16 +146,16 @@ public IActionResult OnPost(string action)
             Directory.CreateDirectory(outputDir);
         }
 
-        // Generate the output file path
+        // get the output path
         string outputPath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.xml");
 
-        // Use StreamWriter to save the XML content to the file
+        // use StreamWriter to save the XML content to the file
         using (StreamWriter writer = new StreamWriter(outputPath))
         {
             writer.Write(xmlData);
         }
     } else if(action == "check"){
-        // Validate XML against XSD
+        // validate XML against XSD
         XmlReaderSettings settings = new XmlReaderSettings();
         settings.Schemas.Add("http://www.example.com/job-application", Path.Combine(_env.ContentRootPath, "schemas/jobApplication.xsd"));
         settings.ValidationType = ValidationType.Schema;

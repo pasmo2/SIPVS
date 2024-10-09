@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <h5>Adresa:</h5>
+        <h5>Sídlo spoločnosti:</h5>
         <div class="flex-container first-row">
             <div class="form-group">
                 <label for="city">Obec:</label>
@@ -103,7 +103,7 @@
             </div>
         </div>
 
-        <h5>Adresa:</h5>
+        <h5>Adresa trvalého pobytu:</h5>
         <div class="flex-container first-row">
             <div class="form-group">
                 <label for="city">Obec:</label>
@@ -169,18 +169,3 @@
     <h3>Validation Result</h3>
     <p class="text-success">@Model.ValidationResult</p>
 </div>
-
-<div class="mt-4">
-    <h3>Transformed HTML Output</h3>
-    <div class="border p-3" style="background-color: #f8f9fa;">
-        @Html.Raw(Model.XmlOutput)
-    </div>
-</div>
-
-@if (TempData["DownloadLink"] != null)
-{
-    <div class="mt-4">
-        <h3>Download Transformed HTML</h3>
-        <a href="@TempData["DownloadLink"]" class="btn btn-success">Download HTML File</a>
-    </div>
-}

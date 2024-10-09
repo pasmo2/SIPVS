@@ -19,16 +19,16 @@
             <h2>Informácie o zamestnávateľovi</h2>
             <p><strong>Meno zamestnávateľa: </strong> <xsl:value-of select="app:jobApplication/app:employer/app:person/app:fullName"/></p>
             <p><strong>Titul: </strong> <xsl:value-of select="app:jobApplication/app:employer/app:person/app:degree"/></p>
-            <p><strong>ICO: </strong> <xsl:value-of select="app:jobApplication/app:employer/@ico"/></p>
-            <p><strong>DIC: </strong> <xsl:value-of select="app:jobApplication/app:employer/@dic"/></p>
-            <p><strong>Legal Form: </strong> <xsl:value-of select="app:jobApplication/app:employer/@legalForm"/></p>
+            <p><strong>ICO: </strong> <xsl:value-of select="app:jobApplication/app:employer/@app:ico"/></p>
+            <p><strong>DIC: </strong> <xsl:value-of select="app:jobApplication/app:employer/@app:dic"/></p>
+            <p><strong>Legal Form: </strong> <xsl:value-of select="app:jobApplication/app:employer/@app:legalForm"/></p>
 
             <!-- Employer Address -->
             <h3><strong>Adresa zamestnávateľa: </strong></h3>
             <p><strong>Názov ulice: </strong> 
                 <xsl:value-of select="app:jobApplication/app:employer/app:address/app:streetName"/>
             </p>
-            <p><strong>Číšlo domu: </strong> 
+            <p><strong>Číslo domu: </strong> 
                 <xsl:value-of select="app:jobApplication/app:employer/app:address/app:streetNumber"/>
             </p>
             <p><strong>Obec: </strong> 
