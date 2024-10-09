@@ -75,9 +75,11 @@ public class FormPageModel : PageModel
 
 public IActionResult OnPost()
 {
-    Attachments = AttachmentsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                   .Select(a => a.Trim())
-                                   .ToList();
+    Attachments = Attachments = string.IsNullOrWhiteSpace(AttachmentsString)
+                                ? new List<string>()  // If AttachmentsString is null or empty, return an empty list
+                                : AttachmentsString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                                .Select(a => a.Trim())
+                                                .ToList();
 
     XNamespace ns = "http://www.example.com/job-application";
 
@@ -100,9 +102,9 @@ public IActionResult OnPost()
                 new XElement(ns + "phone", employer.contact.Phone),
                 new XElement(ns + "email", employer.contact.Email)
             ),
-            new XAttribute(ns + "ico", employer.ICO),
-            new XAttribute(ns + "dic", employer.DIC),
-            new XAttribute(ns + "legalForm", employer.LegalForm)
+            new XAttribute(ns + "ico", employer.ICO ?? "not provided"),
+            new XAttribute(ns + "dic", employer.DIC ?? "not provided"),
+            new XAttribute(ns + "legalForm", employer.LegalForm ?? "not provided")
         ),
         new XElement(ns + "candidate",
             new XElement(ns + "person",
@@ -125,7 +127,9 @@ public IActionResult OnPost()
         ),
         new XElement(ns + "startDate", StartDate.ToString("yyyy-MM-dd")),
         new XElement(ns + "attachments",
-            Attachments.Select(att => new XElement(ns + "attachment", att))
+            Attachments.Any()
+            ? Attachments.Select(att => new XElement(ns + "attachment", att))
+            : new XElement(ns + "attachment", "not_provided")
         )
     );
 
@@ -135,7 +139,7 @@ public IActionResult OnPost()
 
     // Validate XML against XSD
     XmlReaderSettings settings = new XmlReaderSettings();
-    settings.Schemas.Add("http://www.example.com/bankruptcy", Path.Combine(_env.ContentRootPath, "Schemas/jobApplication.xsd"));
+    settings.Schemas.Add("http://www.example.com/job-application", Path.Combine(_env.ContentRootPath, "Schemas/jobApplication.xsd"));
     settings.ValidationType = ValidationType.Schema;
 
     using (StringReader stringReader = new StringReader(xmlData))
@@ -145,6 +149,7 @@ public IActionResult OnPost()
         {
             while (reader.Read()) { }
             ValidationResult = "XML is valid!";
+            return Page();
         }
         catch (XmlSchemaValidationException ex)
         {

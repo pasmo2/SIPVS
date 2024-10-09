@@ -23,7 +23,6 @@
             <div class="form-group">
                 <label for="degree">Titul:</label>
                 <input type="text" id="degree" asp-for="employer.personInfo.Degree" class="form-control" />
-                <span asp-validation-for="employer.personInfo.Degree" class="text-danger"></span>
             </div>
         </div>
 
@@ -54,9 +53,8 @@
                     <span asp-validation-for="employer.address.City" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="cityDistrict">Čast obce:</label>
+                    <label for="cityDistrict">Časť obce:</label>
                     <input type="text" id="cityDistrict" asp-for="employer.address.CityDistrict" class="form-control" />
-                    <span asp-validation-for="employer.address.CityDistrict" class="text-danger"></span>
                 </div>
             </div>
             <div class="flex-container">
@@ -109,7 +107,6 @@
             <div>
                 <label for="degree">Titul:</label>
                 <input type="text" id="degree" asp-for="candidate.personInfo.Degree" class="form-control" />
-                <span asp-validation-for="candidate.personInfo.Degree" class="text-danger"></span>
             </div>
         </div>
 
@@ -122,9 +119,8 @@
                     <span asp-validation-for="candidate.address.City" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="cityDistrict">Čast obce:</label>
+                    <label for="cityDistrict">Časť obce:</label>
                     <input type="text" id="cityDistrict" asp-for="candidate.address.CityDistrict" class="form-control" />
-                    <span asp-validation-for="candidate.address.CityDistrict" class="text-danger"></span>
                 </div>
             </div>
             <div class="flex-container">
@@ -170,7 +166,6 @@
     <div>
         <label for="AttachmentsString">Prílohy (oddelené čiarkou):</label>
         <input type="text" id="AttachmentsString" asp-for="AttachmentsString" class="form-control" placeholder="e.g., Attachment1, Attachment2" />
-        <span asp-validation-for="AttachmentsString" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
 </form>
