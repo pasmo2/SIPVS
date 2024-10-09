@@ -73,7 +73,7 @@ public class FormPageModel : PageModel
     public string XmlOutput { get; set; } = string.Empty;
     public string ValidationResult { get; set; } = string.Empty;
 
-public IActionResult OnPost()
+public IActionResult OnPost(string action)
 {
     Attachments = Attachments = string.IsNullOrWhiteSpace(AttachmentsString)
                                 ? new List<string>()  // If AttachmentsString is null or empty, return an empty list
@@ -135,66 +135,65 @@ public IActionResult OnPost()
 
     string xmlData = finalXml.ToString();
 
-    Console.WriteLine($"XML: {xmlData}");
+    if(action == "save"){
 
-    // Validate XML against XSD
-    XmlReaderSettings settings = new XmlReaderSettings();
-    settings.Schemas.Add("http://www.example.com/job-application", Path.Combine(_env.ContentRootPath, "Schemas/jobApplication.xsd"));
-    settings.ValidationType = ValidationType.Schema;
+    } else if(action == "check"){
+        // Validate XML against XSD
+        XmlReaderSettings settings = new XmlReaderSettings();
+        settings.Schemas.Add("http://www.example.com/job-application", Path.Combine(_env.ContentRootPath, "schemas/jobApplication.xsd"));
+        settings.ValidationType = ValidationType.Schema;
 
-    using (StringReader stringReader = new StringReader(xmlData))
-    using (XmlReader reader = XmlReader.Create(stringReader, settings))
-    {
-        try
-        {
-            while (reader.Read()) { }
-            ValidationResult = "XML is valid!";
+        using (StringReader stringReader = new StringReader(xmlData))
+        using (XmlReader reader = XmlReader.Create(stringReader, settings)){
+            try{
+                while (reader.Read()) { }
+                ValidationResult = "XML is valid!";
+                return Page();
+            }
+            catch (XmlSchemaValidationException ex){
+                ValidationResult = $"Validation failed: {ex.Message}";
+                _logger.LogError($"XML validation exception: {ex.Message}");
+                return Page();
+            }
+        }
+    } else if(action == "export"){
+        try{
+            // Load the XSLT file before performing the transformation
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            xslt.Load(Path.Combine(_env.ContentRootPath, "Schemas/transform.xsl"));
+
+            // Define the path where the transformed HTML will be saved temporarily
+            string outputDir = Path.Combine(_env.WebRootPath, "output");
+            if (!Directory.Exists(outputDir)){
+                Directory.CreateDirectory(outputDir);
+            }
+
+            string htmlFilePath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.html");
+
+            // Perform the transformation and store the result in XmlOutput
+            using (StringReader xmlReader = new StringReader(xmlData))
+            using (XmlReader reader = XmlReader.Create(xmlReader))
+            using (StreamWriter writer = new StreamWriter(htmlFilePath)){
+                xslt.Transform(reader, null, writer);
+            }
+
+            // Read the transformed HTML for display
+            XmlOutput = System.IO.File.ReadAllText(htmlFilePath);
+
+            // Return the file as a downloadable attachment
+            byte[] fileBytes = System.IO.File.ReadAllBytes(htmlFilePath);
+            return File(fileBytes, "text/html", "jobApplication.html");
+        }
+        catch (Exception ex){
+            _logger.LogError($"XSLT Transformation error: {ex.Message}");
+            ValidationResult += " Transformation to HTML failed.";
             return Page();
         }
-        catch (XmlSchemaValidationException ex)
-        {
-            ValidationResult = $"Validation failed: {ex.Message}";
-            _logger.LogError($"XML validation exception: {ex.Message}");
-            return Page();
-        }
     }
+    
+    return Page();
 
-    try
-    {
-        // Load the XSLT file before performing the transformation
-        XslCompiledTransform xslt = new XslCompiledTransform();
-        xslt.Load(Path.Combine(_env.ContentRootPath, "Schemas/transform.xsl"));
 
-        // Define the path where the transformed HTML will be saved temporarily
-        string outputDir = Path.Combine(_env.WebRootPath, "output");
-        if (!Directory.Exists(outputDir))
-        {
-            Directory.CreateDirectory(outputDir);
-        }
-
-        string htmlFilePath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.html");
-
-        // Perform the transformation and store the result in XmlOutput
-        using (StringReader xmlReader = new StringReader(xmlData))
-        using (XmlReader reader = XmlReader.Create(xmlReader))
-        using (StreamWriter writer = new StreamWriter(htmlFilePath))
-        {
-            xslt.Transform(reader, null, writer);
-        }
-
-        // Read the transformed HTML for display
-        XmlOutput = System.IO.File.ReadAllText(htmlFilePath);
-
-        // Return the file as a downloadable attachment
-        byte[] fileBytes = System.IO.File.ReadAllBytes(htmlFilePath);
-        return File(fileBytes, "text/html", "jobApplication.html");
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError($"XSLT Transformation error: {ex.Message}");
-        ValidationResult += " Transformation to HTML failed.";
-        return Page();
-    }
 }
 
 

@@ -1,19 +1,19 @@
 @page
 @model FormPageModel
-@{
-    ViewData["Title"] = "Žiadosť o zamestnanie";
+@section Styles {
+    <link rel="stylesheet" href="~/css/form.css" />
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/form-styles.css" />
+@{
+    ViewData["Title"] = "Žiadosť o zamestnanie";
 }
 
 <h2>Žiadosť o zamestnanie</h2>
 
 <form method="post">
     <fieldset>
-        <legend>Zamestnanec:</legend>
-        <div class="flex-container">
+        <h3>Zamestnanec:</h3>
+        <div class="flex-container name-group">
             <div class="form-group">
                 <label for="fullName">Meno:</label>
                 <input type="text" id="fullName" asp-for="employer.personInfo.FullName" class="form-control" />
@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <div class="flex-container">
+        <div class="flex-container employer-info-group">
             <div class="form-group">
                 <label for="legalForm">Legal Form:</label>
                 <input type="text" id="legalForm" asp-for="employer.LegalForm" class="form-control" />
@@ -44,130 +44,125 @@
             </div>
         </div>
 
-        <fieldset>
-            <legend>Adresa:</legend>
-            <div class="flex-container">
-                <div class="form-group">
-                    <label for="city">Obec:</label>
-                    <input type="text" id="city" asp-for="employer.address.City" class="form-control" />
-                    <span asp-validation-for="employer.address.City" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="cityDistrict">Časť obce:</label>
-                    <input type="text" id="cityDistrict" asp-for="employer.address.CityDistrict" class="form-control" />
-                </div>
+        <h5>Adresa:</h5>
+        <div class="flex-container first-row">
+            <div class="form-group">
+                <label for="city">Obec:</label>
+                <input type="text" id="city" asp-for="employer.address.City" class="form-control" />
+                <span asp-validation-for="employer.address.City" class="text-danger"></span>
             </div>
-            <div class="flex-container">
-                <div class="form-group">
-                    <label for="street">Ulica:</label>
-                    <input type="text" id="street" asp-for="employer.address.StreetName" class="form-control" />
-                    <span asp-validation-for="employer.address.StreetName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="streetNumber">Číslo:</label>
-                    <input type="number" id="streetNumber" asp-for="employer.address.StreetNumber" class="form-control" />
-                    <span asp-validation-for="employer.address.StreetNumber" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="zipCode">PSČ:</label>
-                    <input type="text" id="zipCode" asp-for="employer.address.ZipCode" class="form-control" />
-                    <span asp-validation-for="employer.address.ZipCode" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label for="cityDistrict">Časť obce:</label>
+                <input type="text" id="cityDistrict" asp-for="employer.address.CityDistrict" class="form-control" />
             </div>
-        </fieldset>
+        </div>
+        <div class="flex-container second-row">
+            <div class="form-group">
+                <label for="street">Ulica:</label>
+                <input type="text" id="street" asp-for="employer.address.StreetName" class="form-control" />
+                <span asp-validation-for="employer.address.StreetName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="streetNumber">Číslo:</label>
+                <input type="number" id="streetNumber" asp-for="employer.address.StreetNumber" class="form-control" />
+                <span asp-validation-for="employer.address.StreetNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="zipCode">PSČ:</label>
+                <input type="text" id="zipCode" asp-for="employer.address.ZipCode" class="form-control" />
+                <span asp-validation-for="employer.address.ZipCode" class="text-danger"></span>
+            </div>
+        </div>
 
-
-        <fieldset>
-            <legend>Kontakt:</legend>
-            <div class="flex-container">
-                <div class="form-group">
-                    <label for="phone">Telefonné číslo:</label>
-                    <input type="text" id="phone" asp-for="employer.contact.Phone" class="form-control" />
-                    <span asp-validation-for="employer.contact.Phone" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="email">Emailová adresa:</label>
-                    <input type="email" id="email" asp-for="employer.contact.Email" class="form-control" />
-                    <span asp-validation-for="employer.contact.Email" class="text-danger"></span>
-                </div>
+        <h5>Kontakt:</h5>
+        <div class="flex-container contact-group">
+            <div class="form-group">
+                <label for="phone">Telefonné číslo:</label>
+                <input type="text" id="phone" asp-for="employer.contact.Phone" class="form-control" />
+                <span asp-validation-for="employer.contact.Phone" class="text-danger"></span>
             </div>
-        </fieldset>
-        
+            <div class="form-group">
+                <label for="email">Emailová adresa:</label>
+                <input type="email" id="email" asp-for="employer.contact.Email" class="form-control" />
+                <span asp-validation-for="employer.contact.Email" class="text-danger"></span>
+            </div>
+        </div>
     </fieldset>
 
     <fieldset>
-        <legend>Záujemca:</legend>
-        <div class="flex-container">
+        <h3>Záujemca:</h3>
+        <div class="flex-container name-group">
             <div class="form-group">
                 <label for="fullName">Meno:</label>
                 <input type="text" id="fullName" asp-for="candidate.personInfo.FullName" class="form-control" />
                 <span asp-validation-for="candidate.personInfo.FullName" class="text-danger"></span>
             </div>
             <div class="form-group">
-            <div>
                 <label for="degree">Titul:</label>
                 <input type="text" id="degree" asp-for="candidate.personInfo.Degree" class="form-control" />
             </div>
         </div>
 
-        <fieldset>
-            <legend>Adresa:</legend>
-            <div class="flex-container">
-                <div class="form-group">
-                    <label for="city">Obec:</label>
-                    <input type="text" id="city" asp-for="candidate.address.City" class="form-control" />
-                    <span asp-validation-for="candidate.address.City" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="cityDistrict">Časť obce:</label>
-                    <input type="text" id="cityDistrict" asp-for="candidate.address.CityDistrict" class="form-control" />
-                </div>
+        <h5>Adresa:</h5>
+        <div class="flex-container first-row">
+            <div class="form-group">
+                <label for="city">Obec:</label>
+                <input type="text" id="city" asp-for="candidate.address.City" class="form-control" />
+                <span asp-validation-for="candidate.address.City" class="text-danger"></span>
             </div>
-            <div class="flex-container">
-                <div class="form-group">
-                    <label for="street">Ulica:</label>
-                    <input type="text" id="street" asp-for="candidate.address.StreetName" class="form-control" />
-                    <span asp-validation-for="candidate.address.StreetName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="streetNumber">Číslo:</label>
-                    <input type="number" id="streetNumber" asp-for="candidate.address.StreetNumber" class="form-control" />
-                    <span asp-validation-for="candidate.address.StreetNumber" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="zipCode">PSČ:</label>
-                    <input type="text" id="zipCode" asp-for="candidate.address.ZipCode" class="form-control" />
-                    <span asp-validation-for="candidate.address.ZipCode" class="text-danger"></span>
-                </div>
+            <div class="form-group">
+                <label for="cityDistrict">Časť obce:</label>
+                <input type="text" id="cityDistrict" asp-for="candidate.address.CityDistrict" class="form-control" />
             </div>
-        </fieldset>
-        <fieldset>
-            <legend>Kontakt:</legend>
-            <div class="flex-container">
-                <div class="form-group">
-                    <label for="phone">Telefonné číslo:</label>
-                    <input type="text" id="phone" asp-for="candidate.contact.Phone" class="form-control" />
-                    <span asp-validation-for="candidate.contact.Phone" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label for="email">Emailová adresa:</label>
-                    <input type="email" id="email" asp-for="candidate.contact.Email" class="form-control" />
-                    <span asp-validation-for="candidate.contact.Email" class="text-danger"></span>
-                </div>
+        </div>
+        <div class="flex-container second-row">
+            <div class="form-group">
+                <label for="street">Ulica:</label>
+                <input type="text" id="street" asp-for="candidate.address.StreetName" class="form-control" />
+                <span asp-validation-for="candidate.address.StreetName" class="text-danger"></span>
             </div>
-        </fieldset>
-        
+            <div class="form-group">
+                <label for="streetNumber">Číslo:</label>
+                <input type="number" id="streetNumber" asp-for="candidate.address.StreetNumber" class="form-control" />
+                <span asp-validation-for="candidate.address.StreetNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="zipCode">PSČ:</label>
+                <input type="text" id="zipCode" asp-for="candidate.address.ZipCode" class="form-control" />
+                <span asp-validation-for="candidate.address.ZipCode" class="text-danger"></span>
+            </div>
+        </div>
+
+        <h5>Kontakt:</h5>
+        <div class="flex-container contact-group">
+            <div class="form-group">
+                <label for="phone">Telefonné číslo:</label>
+                <input type="text" id="phone" asp-for="candidate.contact.Phone" class="form-control" />
+                <span asp-validation-for="candidate.contact.Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="email">Emailová adresa:</label>
+                <input type="email" id="email" asp-for="candidate.contact.Email" class="form-control" />
+                <span asp-validation-for="candidate.contact.Email" class="text-danger"></span>
+            </div>
+        </div>
     </fieldset>
-    <div>
-        <label for="startDate">Dátum nástupu:</label>
-        <input type="date" id="startDate" asp-for="StartDate" class="form-control" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
+    <fieldset>
+        <div>
+            <label for="startDate">Dátum nástupu:</label>
+            <input type="date" id="startDate" asp-for="StartDate" class="form-control" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+        <div>
+            <label for="AttachmentsString">Prílohy (oddelené čiarkou):</label>
+            <input type="text" id="AttachmentsString" asp-for="AttachmentsString" class="form-control" placeholder="e.g., Attachment1, Attachment2" />
+        </div>
+    </fieldset>
+    <div class="flex-container">
+        <button type="submit" name="action" value="save" class="btn btn-primary mt-3">Ulož</button>
+        <button type="submit" name="action" value="check" class="btn btn-primary mt-3">Kontrola</button>
+        <button type="submit" name="action" value="export" class="btn btn-primary mt-3">Export do HTML</button>
     </div>
-    <div>
-        <label for="AttachmentsString">Prílohy (oddelené čiarkou):</label>
-        <input type="text" id="AttachmentsString" asp-for="AttachmentsString" class="form-control" placeholder="e.g., Attachment1, Attachment2" />
-    </div>
-    <button type="submit" class="btn btn-primary mt-3">Submit</button>
 </form>
 
 <div class="mt-4">

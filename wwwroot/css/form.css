@@ -1,0 +1,55 @@
+/* General container for flexible field layout */
+.flex-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start !important;
+    margin-bottom: 5px; /* Add some space below each group */
+}
+
+/* General form group with default full row (flex-basis will be overridden below) */
+.form-group {
+    min-width: 200px;
+    box-sizing: border-box;
+}
+
+/* Name group - two fields per row (50% each) */
+.name-group .form-group {
+    flex-basis: calc(50% - 10px);
+}
+
+/* Employer information - three fields per row (33.33% each) */
+.employer-info-group .form-group {
+    flex-basis: calc(33.33% - 10px);
+}
+
+/* Address first row - two fields (50% each) */
+.first-row .form-group {
+    flex-basis: calc(50% - 10px);
+}
+
+/* Address second row - 80% / 10% / 10% */
+.second-row .form-group:first-child {
+    flex-basis: calc(60% - 10px);
+}
+
+.second-row .form-group:nth-child(2),
+.second-row .form-group:nth-child(3) {
+    flex-basis: calc(10% - 10px);
+}
+
+/* Contact group - two fields, 30% for phone and 70% for email */
+.contact-group .form-group:first-child {
+    flex-basis: calc(30% - 10px);
+}
+
+.contact-group .form-group:last-child {
+    flex-basis: calc(70% - 10px);
+}
+
+fieldset {
+    padding: 5px;
+    border: 1px gray solid;
+    border-radius: 10px;
+    background-color: lightgray;
+    margin-bottom: 5px;
+}
