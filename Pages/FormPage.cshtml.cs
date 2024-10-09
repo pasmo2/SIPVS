@@ -136,7 +136,10 @@ public IActionResult OnPost(string action)
     string xmlData = finalXml.ToString();
 
     if(action == "save"){
-
+        // PSEUDOKOD: 
+        // CHECK IF THE SAVED FILE EXISTS
+        // IF NOT EXPORT, IF YES GO TO THE NEXT STEP
+        // AFTER THAT SAVE
     } else if(action == "check"){
         // Validate XML against XSD
         XmlReaderSettings settings = new XmlReaderSettings();
@@ -157,37 +160,34 @@ public IActionResult OnPost(string action)
             }
         }
     } else if(action == "export"){
-        try{
-            // Load the XSLT file before performing the transformation
-            XslCompiledTransform xslt = new XslCompiledTransform();
+        // Create an XslCompiledTransform instance
+        XslCompiledTransform xslt = new XslCompiledTransform();
+
+        // Define the path where the transformed HTML will be saved temporarily
+        string outputDir = Path.Combine(_env.WebRootPath, "output");
+        if (!Directory.Exists(outputDir)){
+            Directory.CreateDirectory(outputDir);
+        }
+
+        string outputPath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.html");
+
+        try
+        {
+            // Load the XSLT file
             xslt.Load(Path.Combine(_env.ContentRootPath, "Schemas/transform.xsl"));
 
-            // Define the path where the transformed HTML will be saved temporarily
-            string outputDir = Path.Combine(_env.WebRootPath, "output");
-            if (!Directory.Exists(outputDir)){
-                Directory.CreateDirectory(outputDir);
+            // Apply the transformation to the XML data and output to HTML file
+            using (StringReader stringReader = new StringReader(xmlData))
+            using (XmlReader xmlReader = XmlReader.Create(stringReader))
+            using (StreamWriter writer = new StreamWriter(outputPath))
+            {
+                xslt.Transform(xmlReader, null, writer);
             }
-
-            string htmlFilePath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.html");
-
-            // Perform the transformation and store the result in XmlOutput
-            using (StringReader xmlReader = new StringReader(xmlData))
-            using (XmlReader reader = XmlReader.Create(xmlReader))
-            using (StreamWriter writer = new StreamWriter(htmlFilePath)){
-                xslt.Transform(reader, null, writer);
-            }
-
-            // Read the transformed HTML for display
-            XmlOutput = System.IO.File.ReadAllText(htmlFilePath);
-
-            // Return the file as a downloadable attachment
-            byte[] fileBytes = System.IO.File.ReadAllBytes(htmlFilePath);
-            return File(fileBytes, "text/html", "jobApplication.html");
+            Console.WriteLine($"HTML transformation successful! Output saved to: {outputPath}");
         }
-        catch (Exception ex){
-            _logger.LogError($"XSLT Transformation error: {ex.Message}");
-            ValidationResult += " Transformation to HTML failed.";
-            return Page();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during transformation: {ex.Message}");
         }
     }
     
