@@ -135,11 +135,25 @@ public IActionResult OnPost(string action)
 
     string xmlData = finalXml.ToString();
 
-    if(action == "save"){
-        // PSEUDOKOD: 
-        // CHECK IF THE SAVED FILE EXISTS
-        // IF NOT EXPORT, IF YES GO TO THE NEXT STEP
-        // AFTER THAT SAVE
+    if (action == "save")
+    {
+        // Define the path where the transformed XML will be saved
+        string outputDir = Path.Combine(_env.WebRootPath, "output");
+        
+        // Ensure the directory exists
+        if (!Directory.Exists(outputDir))
+        {
+            Directory.CreateDirectory(outputDir);
+        }
+
+        // Generate the output file path
+        string outputPath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.xml");
+
+        // Use StreamWriter to save the XML content to the file
+        using (StreamWriter writer = new StreamWriter(outputPath))
+        {
+            writer.Write(xmlData);
+        }
     } else if(action == "check"){
         // Validate XML against XSD
         XmlReaderSettings settings = new XmlReaderSettings();
