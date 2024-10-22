@@ -1,4 +1,5 @@
 @page
+@using System.Web
 @model FormPageModel
 @section Styles {
     <link rel="stylesheet" href="~/css/form.css" />
@@ -9,6 +10,16 @@
 }
 
 <h2>Žiadosť o zamestnanie</h2>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="https://www.slovensko.sk/static/zep/dbridge_js/v1.0/config.js"></script>
+        <script type="text/javascript"
+            src="https://www.slovensko.sk/static/zep/dbridge_js/v1.0/dCommon.min.js"></script>
+        <script type="text/javascript"
+            src="https://www.slovensko.sk/static/zep/dbridge_js/v1.0/dSigXades.min.js"></script>
+        <script type="text/javascript"
+            src="https://www.slovensko.sk/static/zep/dbridge_js/v1.0/dSigXadesBp.min.js"></script>
+        <script type="text/javascript"
+            src="https://www.slovensko.sk/static/zep/dbridge_js/v1.0/dSigXadesExtender.min.js"></script>
 
 <form method="post">
     <fieldset>
@@ -162,6 +173,7 @@
         <button type="submit" name="action" value="save" class="btn btn-primary mt-3">Ulož</button>
         <button type="submit" name="action" value="check" class="btn btn-primary mt-3">Kontrola</button>
         <button type="submit" name="action" value="export" class="btn btn-primary mt-3">Export do HTML</button>
+        <button id="sign" class="btn btn-primary mt-3" onclick="executeScript()">Podpísať</button>
     </div>
 </form>
 
@@ -169,3 +181,95 @@
     <h3>Validation Result</h3>
     <p class="text-success">@Model.ValidationResult</p>
 </div>
+
+<script>
+        @{
+            var base64Content = SIPVS.LoadPdf.LoadFileAsBase64("example.pdf");
+            var encodedBase64Content = HttpUtility.UrlEncode(base64Content);
+        }
+</script>
+
+<script>
+
+function Callback(onSuccess) {
+    this.onSuccess = onSuccess;
+    this.onError = function (e) {
+        alert("Chyba: " + e);
+        };
+}
+
+async function executeScript() {
+    
+    var xmlData = await loadXML();
+    var xsdData = await loadXSD();
+    var xslData = await loadXSL();
+    var encodedBase64Content= '@encodedBase64Content';
+
+
+    ditec.dSigXadesBpJs.deploy(null, new Callback(function () {
+        ditec.dSigXadesBpJs.initialize(new Callback(function () {
+            ditec.dSigXadesBpJs.addPdfObject("objectID", "test_pdf", decodeURIComponent("@encodedBase64Content"), "", "http://example.com/pdf", 2, false, new Callback(function () {
+                ditec.dSigXadesBpJs.addXmlObject("objectID2", "Ziadost o zamestnanie",'http://example.com/jobApplication', xmlData,'http://example.com/jobApplication',"1.0", xsdData,'http://example.com/jobApplication',xslData,'http://example.com/jobApplication','HTML',"http://www.w3.org/1999/XSL/Transform", "http://www.w3.org/1999/xhtml",false,"http://data.gov.sk/def/container/xmldatacontainer+xml/1.1", new Callback(function () {
+                    ditec.dSigXadesBpJs.sign("signatureID", "http://www.w3.org/2001/04/xmlenc#sha256", "", new Callback(function () {
+                        ditec.dSigXadesBpJs.getSignatureWithASiCEnvelopeBase64( new Callback(function (returned) {
+                            const byteCharacters = atob(returned);
+                            const byteNumbers = new Array(byteCharacters.length);
+                            for (let i = 0; i < byteCharacters.length; i++) {
+                                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                            }
+                            const byteArray = new Uint8Array(byteNumbers);
+                            const blob = new Blob([byteArray], { type: 'application/vnd.etsi.asic-e+zip' });
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = 'signed_jobapplication.asice';  
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);}))
+                            }));
+                        }));
+                    }));
+                }));
+            }));
+        }
+    async function loadXML() {
+        try {
+            const response = await fetch('/output/jobApplication.xml');
+            if (!response.ok) {
+                throw new Error('Failed to load XML file.');
+            }
+            const xsdText = await response.text();
+            console.log('XML Loaded:', xsdText);
+            return xsdText;
+        } catch (error) {
+            console.error('Error loading XML:', error);
+        }
+    }
+
+    async function loadXSD() {
+        try {
+            const response = await fetch('/schemas/jobApplication.xsd');
+            if (!response.ok) {
+                throw new Error('Failed to load XSD file.');
+            }
+            const xsdText = await response.text();
+            console.log('XSD Loaded:', xsdText);
+            return xsdText;
+        } catch (error) {
+            console.error('Error loading XSD:', error);
+        }
+    }
+
+    async function loadXSL() {
+        try {
+            const response = await fetch('/schemas/transform.xsl');
+            if (!response.ok) {
+                throw new Error('Failed to load XSL file.');
+            }
+            const xslText = await response.text();
+            console.log('XSL Loaded:', xslText);
+            return xslText;
+        } catch (error) {
+            console.error('Error loading XSL:', error);
+        }
+    }
+</script>

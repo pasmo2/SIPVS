@@ -1,0 +1,104 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.example.com/job-application"
+           xmlns="http://www.example.com/job-application"
+           elementFormDefault="qualified"
+           attributeFormDefault="qualified">
+
+    <xs:complexType name="addressType">
+        <xs:sequence>
+            <xs:element name="city" type="xs:string"/>
+            <xs:element name="cityDistrict" type="xs:string" minOccurs="0"/>
+            <xs:element name="streetName" type="xs:string"/>
+            <xs:element name="streetNumber">
+                <xs:simpleType>
+                    <xs:restriction base="xs:int">
+                        <xs:minInclusive value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="zipCode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="[0-9]{3} ?[0-9]{2}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="residentialType" type="xs:string"/>
+    </xs:complexType>    
+
+
+    <xs:complexType name="contactType">
+        <xs:all>
+            <xs:element name="phone">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="10"/>
+                        <xs:maxLength value="15"/>
+                        <xs:pattern value="\+?[0-9]{1,3}?[-.\s]?([0-9]{1,4}[-.\s]?){2,3}"/>
+                    </xs:restriction> 
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="email">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="[a-zA-ZÁ-ž0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+                    </xs:restriction> 
+                </xs:simpleType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>    
+
+    <xs:complexType name="personType">
+        <xs:sequence>
+            <xs:element name="fullName">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="[A-Za-zÁ-ž'-]+\s+[A-Za-zÁ-ž'-]+"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="degree" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="relation" type="xs:string"/>
+        <xs:attribute name="id" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+
+
+    <xs:element name="jobApplication">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="employer">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="person" type="personType"/>
+                            <xs:element name="address" type="addressType"/>
+                            <xs:element name="contact" type="contactType"/>
+                        </xs:sequence>
+                        <xs:attribute name="ico" type="xs:string" use="required"/>
+                        <xs:attribute name="dic" type="xs:string" use="required"/>
+                        <xs:attribute name="legalForm" type="xs:string" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="candidate">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="person" type="personType"/>
+                            <xs:element name="address" type="addressType"/>
+                            <xs:element name="contact" type="contactType"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="startDate" type="xs:date"/>
+                <xs:element name="attachments">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="attachment" type="xs:string" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

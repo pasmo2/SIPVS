@@ -47,6 +47,7 @@ public class Candidate {
 
 public class FormPageModel : PageModel
 {
+    public string outputPath { get; set; } 
     private readonly ILogger<FormPageModel> _logger;
     private readonly IWebHostEnvironment _env;
 
@@ -72,6 +73,8 @@ public class FormPageModel : PageModel
 
     public string XmlOutput { get; set; } = string.Empty;
     public string ValidationResult { get; set; } = string.Empty;
+
+
 
 public IActionResult OnPost(string action)
 {
@@ -147,7 +150,7 @@ public IActionResult OnPost(string action)
         }
 
         // get the output path
-        string outputPath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.xml");
+        outputPath = Path.Combine(outputDir, $"jobApplication.xml");
 
         // use StreamWriter to save the XML content to the file
         using (StreamWriter writer = new StreamWriter(outputPath))
@@ -157,7 +160,7 @@ public IActionResult OnPost(string action)
     } else if(action == "check"){
         // validate XML against XSD
         XmlReaderSettings settings = new XmlReaderSettings();
-        settings.Schemas.Add("http://www.example.com/job-application", Path.Combine(_env.ContentRootPath, "schemas/jobApplication.xsd"));
+        settings.Schemas.Add("http://www.example.com/job-application", Path.Combine(_env.ContentRootPath, "wwwroot/schemas/jobApplication.xsd"));
         settings.ValidationType = ValidationType.Schema;
 
         using (StringReader stringReader = new StringReader(xmlData))
@@ -183,12 +186,12 @@ public IActionResult OnPost(string action)
             Directory.CreateDirectory(outputDir);
         }
 
-        string outputPath = Path.Combine(outputDir, $"jobApplication_{Guid.NewGuid()}.html");
+        outputPath = Path.Combine(outputDir, $"jobApplication.html");
 
         try
         {
             // Load the XSLT file
-            xslt.Load(Path.Combine(_env.ContentRootPath, "Schemas/transform.xsl"));
+            xslt.Load(Path.Combine(_env.ContentRootPath, "wwwroot/schemas/transform.xsl"));
 
             // Apply the transformation to the XML data and output to HTML file
             using (StringReader stringReader = new StringReader(xmlData))
@@ -204,7 +207,7 @@ public IActionResult OnPost(string action)
             Console.WriteLine($"Error during transformation: {ex.Message}");
         }
     }
-    
+
     return Page();
 
 
