@@ -388,31 +388,36 @@ public class FormPageModel : PageModel
     encapsulatedTimeStamp.InnerText = timestampBase64;
     signatureTimeStamp.AppendChild(encapsulatedTimeStamp);
 
+    // Locate the QualifyingProperties element
+    XmlElement qualifyingProperties = signaturesXml.SelectSingleNode("//xades:QualifyingProperties", GetNamespaceManager(signaturesXml)) as XmlElement;
+    if (qualifyingProperties == null)
+    {
+        throw new InvalidOperationException("QualifyingProperties element not found in the XML.\n");
+    }
+
     XmlElement unsignedProperties = signaturesXml.SelectSingleNode("//xades:UnsignedProperties", GetNamespaceManager(signaturesXml)) as XmlElement;
     if (unsignedProperties == null)
     {
-        unsignedProperties = signaturesXml.CreateElement("xades", "UnsignedProperties", "http://www.w3.org/2000/09/xmldsig#");
-        signaturesXml.DocumentElement.AppendChild(unsignedProperties);
+        unsignedProperties = signaturesXml.CreateElement("xades", "UnsignedProperties", "http://uri.etsi.org/01903/v1.3.2#");
+        qualifyingProperties.AppendChild(unsignedProperties);
     }
 
     XmlElement unsignedSignatureProperties = unsignedProperties.SelectSingleNode("xades:UnsignedSignatureProperties", GetNamespaceManager(signaturesXml)) as XmlElement;
     if (unsignedSignatureProperties == null)
     {
-        unsignedSignatureProperties = signaturesXml.CreateElement("xades", "UnsignedSignatureProperties", "http://www.w3.org/2000/09/xmldsig#");
+        unsignedSignatureProperties = signaturesXml.CreateElement("xades", "UnsignedSignatureProperties", "http://uri.etsi.org/01903/v1.3.2#");
         unsignedProperties.AppendChild(unsignedSignatureProperties);
     }
 
     unsignedSignatureProperties.AppendChild(signatureTimeStamp);
-
-    //modified XML
-    //Console.WriteLine(signaturesXml.OuterXml);
 }
 
 
 private static XmlNamespaceManager GetNamespaceManager(XmlDocument xmlDoc)
 {
     XmlNamespaceManager nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
-    nsmgr.AddNamespace("xades", "http://www.w3.org/2000/09/xmldsig#");
+    nsmgr.AddNamespace("xades", "http://uri.etsi.org/01903/v1.3.2#");
+    nsmgr.AddNamespace("ds", "http://www.w3.org/2000/09/xmldsig#");
     return nsmgr;
 }
 }
