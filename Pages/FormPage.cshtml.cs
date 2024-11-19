@@ -30,12 +30,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Org.BouncyCastle.Cms;
-using Org.BouncyCastle.X509;
 using System.Security.Cryptography.Xml;
-using Org.BouncyCastle.Cms;
-using Org.BouncyCastle.X509;
-using Org.BouncyCastle.Crypto;
 using WindowsFormsApp1;
 using Org.BouncyCastle.Tsp;
 
@@ -87,6 +82,22 @@ public class FormPageModel : PageModel
     {
         _logger = logger;
         _env = env;
+    }
+
+    private static void ValidateTimestamp(byte[] timestampResponse, Org.BouncyCastle.Tsp.TimeStampRequest tsRequest)
+    {
+        try
+        {
+            Org.BouncyCastle.Tsp.TimeStampResponse tsResponse = new Org.BouncyCastle.Tsp.TimeStampResponse(timestampResponse);
+            tsResponse.Validate(tsRequest);
+            
+            Console.WriteLine("Timestamp validation successful.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Timestamp validation failed: {ex.Message}");
+            throw;
+        }
     }
 
     [BindProperty]
@@ -304,15 +315,23 @@ public class FormPageModel : PageModel
     //DONE
     private static async Task<byte[]> GetTimestampTokenAsync(byte[] dataToTimestamp)
     {
-        Org.BouncyCastle.Tsp.TimeStampRequestGenerator tsRequestGenerator = new Org.BouncyCastle.Tsp.TimeStampRequestGenerator(); // certificate generator
-		tsRequestGenerator.SetCertReq(true);
-		Org.BouncyCastle.Tsp.TimeStampRequest tsRequest = tsRequestGenerator.Generate(Org.BouncyCastle.Tsp.TspAlgorithms.Sha256, dataToTimestamp); // vygenerujeme request
+        // haluška timestamp
+        Org.BouncyCastle.Crypto.IDigest digestionproblems = new Org.BouncyCastle.Crypto.Digests.Sha256Digest();
+        digestionproblems.BlockUpdate(dataToTimestamp, 0, dataToTimestamp.Length);
+        byte[] signatureDigest = new byte[digestionproblems.GetDigestSize()];
+        int outOffset = 0;
+        digestionproblems.DoFinal(signatureDigest, outOffset);
 
-		Timestamp ts = new Timestamp();
-		byte[] responseBytes = ts.GetTimestamp(tsRequest.GetEncoded(), "https://test.ditec.sk/TSAServer/tsa.aspx");
+        TimeStampRequestGenerator tsRequestGenerator2 = new TimeStampRequestGenerator(); // certificate generator
+        tsRequestGenerator2.SetCertReq(true);
+        TimeStampRequest tsRequest2 = tsRequestGenerator2.Generate(TspAlgorithms.Sha256, signatureDigest); // vygenerujeme request
 
-		Org.BouncyCastle.Tsp.TimeStampResponse tsResponse = new Org.BouncyCastle.Tsp.TimeStampResponse(responseBytes);
-        return tsResponse.GetEncoded();
+        Timestamp ts2 = new Timestamp();
+        byte[] responseBytes2 = ts2.GetTimestamp(tsRequest2.GetEncoded(), "https://test.ditec.sk/TSAServer/tsa.aspx");
+
+        TimeStampResponse tsResponse2 = new TimeStampResponse(responseBytes2);
+
+        return tsResponse2.TimeStampToken.GetEncoded();
     }
 
     //add timestamp token to ASIC container
@@ -381,10 +400,10 @@ public class FormPageModel : PageModel
 {
     string timestampBase64 = Convert.ToBase64String(timestampResponse);
 
-    XmlElement signatureTimeStamp = signaturesXml.CreateElement("xades", "SignatureTimeStamp");
+    XmlElement signatureTimeStamp = signaturesXml.CreateElement("xades", "SignatureTimeStamp", "http://uri.etsi.org/01903/v1.3.2#");
     signatureTimeStamp.SetAttribute("Id", Guid.NewGuid().ToString()); // Using GUID for unique Id
     
-    XmlElement encapsulatedTimeStamp = signaturesXml.CreateElement("xades", "EncapsulatedTimeStamp");
+    XmlElement encapsulatedTimeStamp = signaturesXml.CreateElement("xades", "EncapsulatedTimeStamp", "http://uri.etsi.org/01903/v1.3.2#");
     encapsulatedTimeStamp.InnerText = timestampBase64;
     signatureTimeStamp.AppendChild(encapsulatedTimeStamp);
 
