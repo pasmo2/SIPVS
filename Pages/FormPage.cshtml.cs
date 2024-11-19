@@ -381,10 +381,10 @@ public class FormPageModel : PageModel
 {
     string timestampBase64 = Convert.ToBase64String(timestampResponse);
 
-    XmlElement signatureTimeStamp = signaturesXml.CreateElement("xades", "SignatureTimeStamp", "http://www.w3.org/2000/09/xmldsig#");
+    XmlElement signatureTimeStamp = signaturesXml.CreateElement("xades", "SignatureTimeStamp");
     signatureTimeStamp.SetAttribute("Id", Guid.NewGuid().ToString()); // Using GUID for unique Id
     
-    XmlElement encapsulatedTimeStamp = signaturesXml.CreateElement("xades", "EncapsulatedTimeStamp", "http://www.w3.org/2000/09/xmldsig#");
+    XmlElement encapsulatedTimeStamp = signaturesXml.CreateElement("xades", "EncapsulatedTimeStamp");
     encapsulatedTimeStamp.InnerText = timestampBase64;
     signatureTimeStamp.AppendChild(encapsulatedTimeStamp);
 
