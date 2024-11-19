@@ -1,0 +1,40 @@
+<jobApplication xmlns="http://www.example.com/job-application">
+  <employer p2:ico="465651651651" p2:dic="6541656501" p2:legalForm="a" xmlns:p2="http://www.example.com/job-application">
+    <p2:person p2:relation="employer">
+      <p2:fullName>Marcel Valent</p2:fullName>
+      <p2:degree>a</p2:degree>
+    </p2:person>
+    <p2:address p2:residentialType="permanent address">
+      <p2:city>Horná Krupá</p2:city>
+      <p2:cityDistrict>Horná Krupá</p2:cityDistrict>
+      <p2:streetName>Horná Krupá</p2:streetName>
+      <p2:streetNumber>160</p2:streetNumber>
+      <p2:zipCode>919 65</p2:zipCode>
+    </p2:address>
+    <p2:contact>
+      <p2:phone>0944210530</p2:phone>
+      <p2:email>valentmarcel1@gmail.com</p2:email>
+    </p2:contact>
+  </employer>
+  <candidate>
+    <person p3:relation="candidate" xmlns:p3="http://www.example.com/job-application">
+      <p3:fullName>Marcel Valent</p3:fullName>
+      <p3:degree>a</p3:degree>
+    </person>
+    <address p3:residentialType="permanent address" xmlns:p3="http://www.example.com/job-application">
+      <p3:city>Horná Krupá</p3:city>
+      <p3:cityDistrict>Horná Krupá</p3:cityDistrict>
+      <p3:streetName>Horná Krupá</p3:streetName>
+      <p3:streetNumber>160</p3:streetNumber>
+      <p3:zipCode>919 65</p3:zipCode>
+    </address>
+    <contact>
+      <phone>0944210530</phone>
+      <email>valentmarcel1@gmail.com</email>
+    </contact>
+  </candidate>
+  <startDate>2024-11-18</startDate>
+  <attachments>
+    <attachment>not_provided</attachment>
+  </attachments>
+</jobApplication>
